@@ -20,17 +20,30 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input)
     {
-        Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => $this->passwordRules(),
-            'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '',
-        ])->validate();
+        // Validator::make($input, [
+        //     'name' => ['required', 'string', 'max:255'],
+        //     'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        //     'password' => $this->passwordRules(),
+        //     'tipo_documentos' => ['required'],
+        //     'documento_legal' => ['required'],
+        //     'documento_personal' => ['required'],
+        //     'celular' => ['required', 'string'],
+        //     'direccion' => ['required', 'string'],
+        // ])->validate();
+        ;
+
 
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            'tipo_documentos' => $input['tipo_documentos'],
+            'documento_legal' => $input['documento_legal'],
+            'documento_personal' => $input['documento_personal'],
+            'noveno_numero' => substr($input['documento_legal'], -2, 1),
+            'celular' => $input['celular'],
+            'direccion' => $input['direccion'],
+            'estado' => 'activo',
         ]);
     }
 }

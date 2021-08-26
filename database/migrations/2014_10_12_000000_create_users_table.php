@@ -17,12 +17,19 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('tipo_documentos', ['RUC','CEDULA']);
+            $table->string('documento_legal', 15);
+            $table->string('documento_personal', 15);
+            $table->string('noveno_numero', 10);
+            $table->string('celular', 15);
+            $table->string('direccion', 191);
+            $table->enum('estado', ['activo','inactivo']);
+            $table->string('device_token')->nullable();
             $table->rememberToken();
-            $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
+
         });
     }
 

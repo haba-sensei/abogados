@@ -15,7 +15,14 @@ mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
         require('postcss-import'),
         require('tailwindcss'),
-    ]);
+    ])
+    .postCss('resources/css/base_web.css', 'public/dist/css').version()
+
+mix.copyDirectory('resources/web/css/main', 'public/dist/css')
+mix.copyDirectory('resources/web/icons', 'public/dist/icons')
+mix.copyDirectory('resources/web/fonts', 'public/dist/fonts')
+mix.copyDirectory('resources/web/js', 'public/dist/js')
+mix.copyDirectory('resources/web/images', 'public/dist/images');
 
 if (mix.inProduction()) {
     mix.version();

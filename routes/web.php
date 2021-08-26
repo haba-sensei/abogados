@@ -1,6 +1,8 @@
 <?php
-
+ 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\WebController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -12,10 +14,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+/* RUTAS HOME  */
+ Route::get('/', [WebController::class, 'index'])->name('web.home');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/web', 'web.home');
+
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
