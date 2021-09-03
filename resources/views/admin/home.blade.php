@@ -32,13 +32,20 @@
     <nav>
 
                 <section>
-                    <div class="gap no-top" style="top: 90px;">
+                    <div class="gap no-top" style="top: 61px;">
                         <div class="height-100vh">
 
                             <div class="conversation">
-                                <div class="bg-image" style="background:url()"></div>
-                                <div class="time">Hoy</div>
-                                <ul class="chat-desc">
+                                <div class="" style="background:url()"></div>
+
+                                <script>
+                                    var botmanWidget = {
+                                        aboutText: 'Escribe una opcion',
+                                        introMessage: "✋ Hola! Escribe ok para ayudarte..."
+                                    };
+                                </script>
+                                <iframe id="chatBotManFrame" style="height: 33.2rem;" src="/botman/chat?conf=%7B%22chatServer%22%3A%22%2Fbotman%22%2C%22frameEndpoint%22%3A%22%2Fbotman%2Fchat%22%2C%22timeFormat%22%3A%22HH%3AMM%22%2C%22dateTimeFormat%22%3A%22m%2Fd%2Fyy%20HH%3AMM%22%2C%22title%22%3A%22BotMan%20Widget%22%2C%22cookieValidInDays%22%3A1%2C%22introMessage%22%3A%22%E2%9C%8B%20Hola!%20Para%20continuar%20escribe%20listo%22%2C%22placeholderText%22%3A%22Envia%20un%20mensaje...%22%2C%22displayMessageTime%22%3Atrue%2C%22sendWidgetOpenedEvent%22%3Afalse%2C%22widgetOpenedEventData%22%3A%22%22%2C%22mainColor%22%3A%22%23408591%22%2C%22headerTextColor%22%3A%22%23333%22%2C%22bubbleBackground%22%3A%22%23408591%22%2C%22bubbleAvatarUrl%22%3A%22%22%2C%22desktopHeight%22%3A450%2C%22desktopWidth%22%3A370%2C%22mobileHeight%22%3A%22100%25%22%2C%22mobileWidth%22%3A%22300px%22%2C%22videoHeight%22%3A160%2C%22aboutLink%22%3A%22https%3A%2F%2Fbotman.io%22%2C%22aboutText%22%3A%22Write%20Something%22%2C%22chatId%22%3A%22%22%2C%22userId%22%3A%22%22%2C%22alwaysUseFloatingButton%22%3Afalse%2C%22wrapperHeight%22%3A450%7D" width="100%" height="100%" frameborder="0" allowtransparency="true" style="background-color: transparent;"></iframe>
+                                {{-- <ul class="chat-desc">
                                     <li class="you">
                                         <span>Asistente (Bot)</span>
                                         <p>Hola! para ayudarte debes elegir una de las siguientes opciones: </p>
@@ -74,7 +81,7 @@
                                     <form method="post">
                                         <input type="text" placeholder="Type a Message">
                                     </form>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -90,7 +97,7 @@
                     <div class="col-12">
                         <div class="head-meta">
                             <h5>Notificaciones </h5>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -102,7 +109,6 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-
 
                     </div>
                 </div>
