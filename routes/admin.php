@@ -2,9 +2,11 @@
 use App\Http\Controllers\Admin\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BotManController;
+use Illuminate\Support\Facades\Auth;
 
 /* HOME DASHBOARD ROUTES PREFIX DASH */
 Route::get('/', [HomeController::class, 'render'])->name('dash');
+
 
 
 Route::post('save_token', [HomeController::class, 'saveToken'])->name('admin.save_token');
@@ -13,6 +15,4 @@ Route::post('send_notification', [HomeController::class, 'sendNotification'])->n
 
 
 Route::get('{pageName}', [HomeController::class, 'render'])->name('page');
-
-
-
+ 

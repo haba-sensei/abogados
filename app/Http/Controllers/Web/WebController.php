@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class WebController extends Controller
 {
@@ -14,6 +15,7 @@ class WebController extends Controller
      */
     public function index()
     {
+        Artisan::call('schedule:run');
         return view('web.home.index');
     }
 

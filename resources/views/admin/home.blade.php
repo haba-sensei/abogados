@@ -109,6 +109,10 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
+                        <button onclick="initFirebaseMessagingRegistration()"
+                        class="text-white btn btn-danger btn-flat">Generate Device Token
+                        </button>
+
 
                     </div>
                 </div>
@@ -125,19 +129,18 @@
 
 
 @section('script')
-
+{{-- <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script> --}}
 <script>
-
 
 var firebaseConfig = {
     apiKey: "AIzaSyCmF3I02OcesAK2dCmI01HS13FjU2QJQB0",
-    authDomain: "abogadosfcm.firebaseapp.com",
-    databaseURL: "https://abogadosfcm-default-rtdb.firebaseio.com",
-    projectId: "abogadosfcm",
-    storageBucket: "abogadosfcm.appspot.com",
-    messagingSenderId: "891936953167",
-    appId: "1:891936953167:web:39beeac3ae23e5942d2b3a",
-    measurementId: "G-R6WYB6DZMY"
+  authDomain: "abogadosfcm.firebaseapp.com",
+  databaseURL: "https://abogadosfcm-default-rtdb.firebaseio.com",
+  projectId: "abogadosfcm",
+  storageBucket: "abogadosfcm.appspot.com",
+  messagingSenderId: "891936953167",
+  appId: "1:891936953167:web:39beeac3ae23e5942d2b3a",
+  measurementId: "G-R6WYB6DZMY"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -149,7 +152,7 @@ firebase.initializeApp(firebaseConfig);
                 return messaging.getToken()
             })
             .then(function(token) {
-                console.log(token);
+                 console.log(token);
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -183,7 +186,7 @@ firebase.initializeApp(firebaseConfig);
         new Notification(noteTitle, noteOptions);
     });
 
-    initFirebaseMessagingRegistration();
+    // initFirebaseMessagingRegistration();
 </script>
 
 @endsection
