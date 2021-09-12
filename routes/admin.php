@@ -13,6 +13,5 @@ Route::post('save_token', [HomeController::class, 'saveToken'])->name('admin.sav
 Route::post('send_notification', [HomeController::class, 'sendNotification'])->name('admin.send_notification');
 
 
-
 Route::get('{pageName}', [HomeController::class, 'render'])->name('page');
- 
+
