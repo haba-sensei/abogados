@@ -20,7 +20,7 @@ use App\Http\Controllers\Web\WebController;
 
 Route::view('/web', 'web.home');
 
-Route::any(['get', 'post'], '/botman/chat', [BotManController::class, 'handle']);
+Route::march(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
