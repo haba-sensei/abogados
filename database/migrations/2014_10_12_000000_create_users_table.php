@@ -15,25 +15,24 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('tipo_documentos', ['RUC','CEDULA']);
-            $table->string('documento_legal', 15);
-            $table->string('documento_personal', 15);
+            $table->enum('document', ['RUC', 'CEDULA']);
+            $table->string('num_document', 15);
             $table->string('noveno_numero', 10);
-            $table->string('celular', 15);
+            $table->string('fullname' );
+            $table->string('email')->unique();
+            $table->string('dni_pasaporte');
+            $table->string('telefono');
             $table->string('direccion', 191);
-            $table->enum('estado', ['activo','inactivo']);
+            $table->string('password');
+            $table->enum('estado', [1, 0]);
             $table->string('device_token')->nullable();
             $table->rememberToken();
-            $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
-
         });
     }
 
     /**
+     * $table->string('profile_photo_path', 2048)->nullable();
      * Reverse the migrations.
      *
      * @return void

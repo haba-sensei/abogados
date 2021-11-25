@@ -45,8 +45,8 @@
                                         introMessage: "✋ Hola! Escribe ok para ayudarte..."
                                     };
                                 </script>
-                                 <script src='{{ asset('js/chat.js') }}'></script>
-                                <iframe id="chatBotManFrame" style="height: 33.2rem;" src="botman/chat?conf=%7B%22chatServer%22%3A%22%2Fbotman%22%2C%22frameEndpoint%22%3A%22%2Fbotman%2Fchat%22%2C%22timeFormat%22%3A%22HH%3AMM%22%2C%22dateTimeFormat%22%3A%22m%2Fd%2Fyy%20HH%3AMM%22%2C%22title%22%3A%22BotMan%20Widget%22%2C%22cookieValidInDays%22%3A1%2C%22introMessage%22%3A%22%E2%9C%8B%20Hola!%20Para%20iniciar%20el%20chatbot%20escribe%20empezar%22%2C%22placeholderText%22%3A%22Envia%20un%20mensaje...%22%2C%22displayMessageTime%22%3Atrue%2C%22sendWidgetOpenedEvent%22%3Afalse%2C%22widgetOpenedEventData%22%3A%22%22%2C%22mainColor%22%3A%22%23408591%22%2C%22headerTextColor%22%3A%22%23333%22%2C%22bubbleBackground%22%3A%22%23408591%22%2C%22bubbleAvatarUrl%22%3A%22%22%2C%22desktopHeight%22%3A450%2C%22desktopWidth%22%3A370%2C%22mobileHeight%22%3A%22100%25%22%2C%22mobileWidth%22%3A%22300px%22%2C%22videoHeight%22%3A160%2C%22aboutLink%22%3A%22https%3A%2F%2Fbotman.io%22%2C%22aboutText%22%3A%22Write%20Something%22%2C%22chatId%22%3A%22%22%2C%22userId%22%3A%22%22%2C%22alwaysUseFloatingButton%22%3Afalse%2C%22wrapperHeight%22%3A450%7D" width="100%" height="100%" frameborder="0" allowtransparency="true" style="background-color: transparent;"></iframe>
+                                 {{-- <script src='{{ asset('js/chat.js') }}'></script> --}}
+                                <iframe id="chatBotManFrame" style="height: 33.2rem;" src="{{URL::to('botman/chat?conf=%7B%22chatServer%22%3A%22%2Fbotman%22%2C%22frameEndpoint%22%3A%22%2Fbotman%2Fchat%22%2C%22timeFormat%22%3A%22HH%3AMM%22%2C%22dateTimeFormat%22%3A%22m%2Fd%2Fyy%20HH%3AMM%22%2C%22title%22%3A%22BotMan%20Widget%22%2C%22cookieValidInDays%22%3A1%2C%22introMessage%22%3A%22%E2%9C%8B%20Hola!%20Para%20iniciar%20el%20chatbot%20escribe%20empezar%22%2C%22placeholderText%22%3A%22Envia%20un%20mensaje...%22%2C%22displayMessageTime%22%3Atrue%2C%22sendWidgetOpenedEvent%22%3Afalse%2C%22widgetOpenedEventData%22%3A%22%22%2C%22mainColor%22%3A%22%23408591%22%2C%22headerTextColor%22%3A%22%23333%22%2C%22bubbleBackground%22%3A%22%23408591%22%2C%22bubbleAvatarUrl%22%3A%22%22%2C%22desktopHeight%22%3A450%2C%22desktopWidth%22%3A370%2C%22mobileHeight%22%3A%22100%25%22%2C%22mobileWidth%22%3A%22300px%22%2C%22videoHeight%22%3A160%2C%22aboutLink%22%3A%22https%3A%2F%2Fbotman.io%22%2C%22aboutText%22%3A%22Write%20Something%22%2C%22chatId%22%3A%22%22%2C%22userId%22%3A%22%22%2C%22alwaysUseFloatingButton%22%3Afalse%2C%22wrapperHeight%22%3A450%7D')}}" width="100%" height="100%" frameborder="0" allowtransparency="true" style="background-color: transparent;"></iframe>
                                 {{-- <ul class="chat-desc">
                                     <li class="you">
                                         <span>Asistente (Bot)</span>
@@ -131,6 +131,7 @@
 
 
 @section('script')
+
 {{-- <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script> --}}
 <script>
 
