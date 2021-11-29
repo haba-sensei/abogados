@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginPostRequest;
+use App\Http\Requests\RegisterPostRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Symfony\Component\HttpFoundation\Response;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -19,17 +21,15 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-
         $validator = Validator::make($credentials, [
             'email' => 'required|email',
-            'password' => 'required|string|min:6|max:50'
+            'password' => 'required|string|min:6|max:50',
         ]);
-
 
         if ($validator->fails()) {
             return response()->json(['error' => 'Credenciales Incorrectas'], Response::HTTP_OK);
         }
-        
+
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
@@ -45,44 +45,39 @@ class AuthController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-
         return response()->json([
             'success' => true,
             'data' => $token,
-            'message' => 'Token creado con exito'
+            'message' => 'Token creado con exito',
         ], Response::HTTP_CREATED);
     }
 
-    public function login()
+    public function login(LoginPostRequest $request)
     {
         try {
             $credentials = request(['email', 'password']);
             $token = null;
             if (!$token = JWTAuth::attempt($credentials)) {
-
                 return response()->json([
                     'success' => false,
                     'error' => 'Unauthorized',
-                    'message' => 'Credenciales incorrectas '
+                    'message' => 'Credenciales incorrectas ',
                 ], Response::HTTP_UNAUTHORIZED);
             } else {
-
                 $user = Auth::user();
                 $user->device_token = $token;
                 $user->save();
-
                 $data = [
                     'id' => $user->id,
-                    'name' => $user->name,
+                    'fullname' => $user->fullname,
                     'email' => $user->email,
-                    'profile_photo_path' => $user->profile_photo_path,
-                    'device_token' => $user->device_token
+                    'device_token' => $user->device_token,
                 ];
 
                 return response()->json([
                     'success' => true,
                     'data' => $data,
-                    'message' => 'El usuario ha sido autenticado'
+                    'message' => 'El usuario ha sido autenticado',
                 ], Response::HTTP_OK);
             }
         } catch (Exception $e) {
@@ -90,7 +85,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => 'Error interno del servidor',
-                'message' => 'Error interno del servidor'
+                'message' => 'Error interno del servidor',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -105,14 +100,14 @@ class AuthController extends Controller
     {
         //valid credential
         $validator = Validator::make($request->only('device_token'), [
-            'device_token' => 'required'
+            'device_token' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'error' => 'Token Invalido',
-                'message' => 'Token Invalido'
+                'message' => 'Token Invalido',
             ], Response::HTTP_OK);
         }
 
@@ -121,12 +116,12 @@ class AuthController extends Controller
             JWTAuth::invalidate($request->device_token);
             return response()->json([
                 'success' => true,
-                'message' => 'Session Cerrada'
+                'message' => 'Session Cerrada',
             ], Response::HTTP_OK);
         } catch (JWTException $exception) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error Interno'
+                'message' => 'Error Interno',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -147,7 +142,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => 'Error email duplicado',
-                    'message' => 'Error email duplicado'
+                    'message' => 'Error email duplicado',
                 ], 400);
             }
             $user = Auth::user();
@@ -157,19 +152,19 @@ class AuthController extends Controller
 
             $data = [
                 'name' => $user->name,
-                'email' => $user->email
+                'email' => $user->email,
             ];
 
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario Actualizado con exito',
-                'data' =>  $data
+                'data' => $data,
             ], 201);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-                'message' => 'Error interno del servidor'
+                'message' => 'Error interno del servidor',
             ], 500);
         }
     }
@@ -184,20 +179,19 @@ class AuthController extends Controller
 
             $data = [
                 'name' => $user->name,
-                'email' => $user->email
+                'email' => $user->email,
             ];
-
 
             return response()->json([
                 'success' => true,
                 'message' => 'Password Actualizado con exito',
-                'data' => $data
+                'data' => $data,
             ], 201);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'Error Password',
-                'message' => 'Error interno del servidor'
+                'message' => 'Error interno del servidor',
             ], 500);
         }
     }
@@ -211,68 +205,51 @@ class AuthController extends Controller
             $data = [
                 'name' => $user->name,
                 'email' => $user->email,
-                'device_token' => $user->device_token
+                'device_token' => $user->device_token,
             ];
 
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario obtenido con exito',
-                'data' => $data
+                'data' => $data,
             ], 201);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'Error interno del servidor',
-                'message' => 'Error interno del servidor'
+                'message' => 'Error interno del servidor',
             ], 500);
         }
     }
 
-    public function register(Request $request)
+    public function register(RegisterPostRequest $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'email' => 'required|string|email|max:100|unique:users',
-                'password' => 'required|string|min:6'
-            ]);
+        $user = User::create([
+            'document' => $request->document,
+            'num_document' => $request->num_document,
+            'fullname' => $request->fullname,
+            'email' => $request->email,
+            'dni_pasaporte' => $request->dni_pasaporte,
+            'telefono' => $request->telefono,
+            'direccion' => $request->direccion,
+            'password' => bcrypt($request->password),
+        ])->assignRole('Cliente');
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Error Email duplicado',
-                    'message' => 'Error email duplicado'
-                ], 400);
-            };
+        $token = JWTAuth::fromUser($user);
 
-            $user = User::create(
-                array_merge(
-                    $validator->validate(),
-                    ['password' => bcrypt($request->password)],
+        $data = [
+            'id' => $user->id,
+            'fullname' => $user->fullname,
+            'email' => $user->email,
+            'device_token' => $token,
+        ];
 
-                )
-            )->assignRole('Comprador');
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario Creado con exito',
+            'data' => $data,
 
-            $token = JWTAuth::fromUser($user);
+        ], 201);
 
-            $data = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'device_token' => $token
-            ];
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario Creado con exito',
-                'data' => $data
-            ], 201);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Email duplicado',
-                'message' => 'Error interno del servidor'
-            ], 500);
-        }
     }
 }

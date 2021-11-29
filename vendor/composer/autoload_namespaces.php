@@ -9,4 +9,5 @@ return array(
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Evenement' => array($vendorDir . '/evenement/evenement/src'),
     'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
+    'Barryvdh' => array($vendorDir . '/barryvdh/reflection-docblock/src'),
 );
