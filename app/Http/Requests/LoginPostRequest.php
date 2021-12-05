@@ -6,6 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class LoginPostRequest extends FormRequest
@@ -35,7 +36,10 @@ class LoginPostRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        $errors = (new ValidationException($validator))->errors();
+        $errors = '';
+        foreach ((new ValidationException($validator))->errors() as $key => $value) {
+            $errors .= $value[0] . "\n";
+        }
 
         throw new HttpResponseException(
             response()->json([

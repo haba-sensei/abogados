@@ -4,52 +4,24 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginPostRequest;
+use App\Http\Requests\LogoutPostRequest;
 use App\Http\Requests\RegisterPostRequest;
+use App\Http\Requests\UpdatePassPutRequest;
+use App\Http\Requests\UpdateUserPutRequest;
 use App\Models\User;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    public function authenticate(Request $request)
+    public function optimize()
     {
-        $credentials = $request->only('email', 'password');
-
-        $validator = Validator::make($credentials, [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6|max:50',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Credenciales Incorrectas'], Response::HTTP_OK);
-        }
-
-        try {
-            if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Login credentials are invalid.',
-                ], Response::HTTP_BAD_REQUEST);
-            }
-        } catch (JWTException $e) {
-            return $credentials;
-            return response()->json([
-                'success' => false,
-                'message' => 'Could not create token.',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $token,
-            'message' => 'Token creado con exito',
-        ], Response::HTTP_CREATED);
+        Artisan::call('optimize');
+        return "optimizado";
     }
 
     public function login(LoginPostRequest $request)
@@ -64,9 +36,19 @@ class AuthController extends Controller
                     'message' => 'Credenciales incorrectas ',
                 ], Response::HTTP_UNAUTHORIZED);
             } else {
+
+                if (Auth::user()->roles()->get()[0]->name != "Cliente") {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Unauthorized',
+                        'message' => 'Credenciales de abogado',
+                    ], Response::HTTP_UNAUTHORIZED);
+                }
+
                 $user = Auth::user();
                 $user->device_token = $token;
                 $user->save();
+
                 $data = [
                     'id' => $user->id,
                     'fullname' => $user->fullname,
@@ -90,30 +72,14 @@ class AuthController extends Controller
         }
     }
 
-    public function optimize()
+    public function logout(LogoutPostRequest $request)
     {
-        Artisan::call('optimize');
-        return "Optimizado";
-    }
-
-    public function logout(Request $request)
-    {
-        //valid credential
-        $validator = Validator::make($request->only('device_token'), [
-            'device_token' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Token Invalido',
-                'message' => 'Token Invalido',
-            ], Response::HTTP_OK);
-        }
-
         try {
-            //? errores de tipo token se encuentran en el middeware JWT recuerda
+            $user = Auth::user();
             JWTAuth::invalidate($request->device_token);
+            $user->device_token = '';
+            $user->save();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Session Cerrada',
@@ -126,33 +92,30 @@ class AuthController extends Controller
         }
     }
 
-    public function refresh()
-    {
-        return $this->respondWithToken(Auth::refresh());
-    }
-
-    public function updateUser(Request $request)
+    public function updateUser(UpdateUserPutRequest $request)
     {
         try {
-
-            $validator = User::where('email', $request->email)->get()->except(Auth::id());
-
-            if ($validator->count() >= 1) {
-
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Error email duplicado',
-                    'message' => 'Error email duplicado',
-                ], 400);
-            }
             $user = Auth::user();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->save();
+            $user->update([
+                'document' => $request->document,
+                'num_document' => $request->num_document,
+                'noveno_numero' => $request->num_document[9],
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'dni_pasaporte' => $request->dni_pasaporte,
+                'telefono' => $request->telefono,
+                'direccion' => $request->direccion,
+            ]);
 
             $data = [
-                'name' => $user->name,
+                'document' => $user->document,
+                'num_document' => $user->num_document,
+                'noveno_numero' => $user->noveno_numero,
+                'fullname' => $user->fullname,
                 'email' => $user->email,
+                'dni_pasaporte' => $user->dni_pasaporte,
+                'telefono' => $user->telefono,
+                'direccion' => $user->direccion,
             ];
 
             return response()->json([
@@ -160,6 +123,7 @@ class AuthController extends Controller
                 'message' => 'Usuario Actualizado con exito',
                 'data' => $data,
             ], 201);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -169,24 +133,18 @@ class AuthController extends Controller
         }
     }
 
-    public function updatePass(Request $request)
+    public function updatePass(UpdatePassPutRequest $request)
     {
         try {
-
             $user = Auth::user();
             $user->password = bcrypt($request->password);
             $user->save();
 
-            $data = [
-                'name' => $user->name,
-                'email' => $user->email,
-            ];
-
             return response()->json([
                 'success' => true,
                 'message' => 'Password Actualizado con exito',
-                'data' => $data,
             ], 201);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -199,13 +157,17 @@ class AuthController extends Controller
     public function getUser()
     {
         try {
-
             $user = Auth::user();
 
             $data = [
-                'name' => $user->name,
+                'document' => $user->document,
+                'num_document' => $user->num_document,
+                'noveno_numero' => $user->noveno_numero,
+                'fullname' => $user->fullname,
                 'email' => $user->email,
-                'device_token' => $user->device_token,
+                'dni_pasaporte' => $user->dni_pasaporte,
+                'telefono' => $user->telefono,
+                'direccion' => $user->direccion,
             ];
 
             return response()->json([
@@ -213,43 +175,56 @@ class AuthController extends Controller
                 'message' => 'Usuario obtenido con exito',
                 'data' => $data,
             ], 201);
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'Error interno del servidor',
                 'message' => 'Error interno del servidor',
             ], 500);
+
         }
     }
 
     public function register(RegisterPostRequest $request)
     {
-        $user = User::create([
-            'document' => $request->document,
-            'num_document' => $request->num_document,
-            'fullname' => $request->fullname,
-            'email' => $request->email,
-            'dni_pasaporte' => $request->dni_pasaporte,
-            'telefono' => $request->telefono,
-            'direccion' => $request->direccion,
-            'password' => bcrypt($request->password),
-        ])->assignRole('Cliente');
+        try {
+            $user = User::create([
+                'document' => $request->document,
+                'num_document' => $request->num_document,
+                'noveno_numero' => $request->num_document[9],
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'dni_pasaporte' => $request->dni_pasaporte,
+                'telefono' => $request->telefono,
+                'direccion' => $request->direccion,
+                'password' => bcrypt($request->password),
+            ])->assignRole('Cliente');
 
-        $token = JWTAuth::fromUser($user);
+            $token = JWTAuth::fromUser($user);
+            $user->device_token = $token;
+            $user->save();
 
-        $data = [
-            'id' => $user->id,
-            'fullname' => $user->fullname,
-            'email' => $user->email,
-            'device_token' => $token,
-        ];
+            $data = [
+                'id' => $user->id,
+                'fullname' => $user->fullname,
+                'email' => $user->email,
+                'device_token' => $token,
+            ];
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Usuario Creado con exito',
-            'data' => $data,
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuario Creado con exito',
+                'data' => $data,
+            ], 201);
 
-        ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => ['Error interno del servidor'],
+                'message' => 'Error interno del servidor',
+            ], 500);
 
+        }
     }
 }

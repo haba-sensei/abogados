@@ -17,14 +17,14 @@ class UserSeeder extends Seeder
     {
 
         User::create([
-            'document' => 'RUC',
-            'num_document' => '9999999999',
-            'fullname' => 'Haba',
-            'email' => 'admin@onlaw.com',
-            'dni_pasaporte' => '9999999999',
-            'telefono' => '999999999',
-            'direccion' => '9999999999',
-            'password' => bcrypt('123456'),
+            "document" => "RUC",
+            "num_document" => "9999999999",
+            "fullname" => "Haba",
+            "email" => "admin@onlaw.com",
+            "dni_pasaporte" => "9999999999",
+            "telefono" => "999999999",
+            "direccion" => "9999999999",
+            "password" => bcrypt("123456"),
         ])->assignRole('Admin');
 
         User::factory(2)->create()->each(function ($user) {
